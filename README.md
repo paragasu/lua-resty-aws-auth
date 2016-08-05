@@ -38,5 +38,5 @@ aws:set_ngx_auth_headers()
 
 
 
-Reference 
+Reference  
 [Signing AWS With Signature V4](https://docs.aws.amazon.com/general/latest/gr/sigv4_signing.html)
