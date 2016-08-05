@@ -60,13 +60,19 @@ local function get_canonical_request()
 end
 
 
+-- build aws credential
+local function get_credential()
+  local param   = { aws_key, date, aws_region, aws_service, 'aws4_request' }
+  return table.concat(param, '/') 
+end
+
+
 -- get string
 local function get_string_to_sign()
-  local param   = { aws_key, date, aws_region, aws_service, 'aws4_request' }
   local content = {
     'AWS4-HMAC-SHA256',
     timestamp,
-    table.concat(param, '/'),
+    get_credential(),
     get_canonical_request()
   }
   return table.concat(content, '\n')
@@ -85,10 +91,9 @@ end
 -- get authorization string
 -- x-amz-content-sha256 required by s3
 local function get_authorization()
-  local param  = { aws_key, date, aws_region,aws_service, 'aws4_request' }
   local header = {
     'AWS4-HMAC-SHA256',
-    'Credential=' .. table.concat(param, '/'),
+    'Credential=' .. get_credential(),
     'SignedHeaders=host;content-type;x-amz-date',
     'Signature=' .. get_signature()
   }
