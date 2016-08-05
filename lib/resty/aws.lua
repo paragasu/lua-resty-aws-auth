@@ -102,7 +102,7 @@ end
 
 
 -- get the current timestamp in iso8601 basic format
-local function get_amz_date()
+local function get_amz_date_header()
   return timestamp
 end
 
@@ -119,7 +119,7 @@ end
 return {
   __VERSION = '0.1.0',
   new = new,
-  get_amz_date = get_amz_date,
+  get_amz_date_header = get_amz_date_header,
   get_authorization_header = get_authorization_header,
   set_ngx_auth_headers = set_ngx_auth_headers 
 }
