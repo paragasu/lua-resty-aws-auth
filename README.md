@@ -12,10 +12,10 @@ simple lua resty utilities to generate amazon v4 authorization and signature hea
 
 local aws_auth = require "lua-resty-aws-auth"
 local config = {
-  aws_key = "",
-  aws_secret = "",
-  region  = "",
-  service = "",
+  aws_key = "AKIDEXAMPLE",
+  aws_secret = "xxxsecret",
+  region  = "us-east-1",
+  service = "ses",
   req = "" -- table of all request params
 }
 
