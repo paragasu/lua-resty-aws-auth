@@ -10,7 +10,7 @@ local str  = require 'resty.string'
 local time = tonumber(ngx.time())
 local date = os.date('!%Y%m%d', time)
 local timestamp = os.date('!%Y%m%dT%H%M%SZ', time)
-local aws_key, aws_secret, aws_region, aws_service, request
+local aws_key, aws_secret, aws_region, aws_service, host, request
 
 -- init new aws auth
 local function new(config)
@@ -18,6 +18,7 @@ local function new(config)
   aws_secret  = config.aws_secret
   aws_region  = config.aws_region
   aws_service = config.aws_service
+  host        = config.aws_host
   request     = config.req 
 end
 
@@ -48,7 +49,7 @@ local function get_canonical_request()
   local param  = {
     'POST' .. '\n/\n',
     'content-type:application/x-www-form-urlencoded',
-    'host:' .. table.concat({ aws_service, aws_region, 'amazonaws.com' }, '.'),
+    'host:' .. host,
     'x-amz-content-sha256:' .. digest,
     'x-amz-date:' .. timestamp .. '\n', -- there is a line break here
     'host;content-type;x-content-sha256;x-amz-date',
