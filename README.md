@@ -14,8 +14,8 @@ local aws_auth = require "lua-resty-aws-auth"
 local config = {
   aws_key = "AKIDEXAMPLE",
   aws_secret = "xxxsecret",
-  region  = "us-east-1",
-  service = "ses",
+  aws_region  = "us-east-1",
+  aws_service = "ses",
   req = { hello="world" } -- table of all request params
 }
 
@@ -38,5 +38,5 @@ aws:set_ngx_auth_headers()
 
 
 
-Reference  
+Reference 
 [Signing AWS With Signature V4](https://docs.aws.amazon.com/general/latest/gr/sigv4_signing.html)
