@@ -1,10 +1,18 @@
 # lua-resty-aws-auth
 simple lua resty utilities to generate amazon v4 authorization and signature headers
 
-# usage
+# Installation
 
-    $luarocks install lua-resty-aws-auth
+Openresty installation should be compiled with *--with-luajit* directive otherwise you will get an error,
 
+    "module 'ffi' not found"
+
+```lua
+-- install dependency
+#luarocks install lua-resty-string
+#luarocks install lua-resty-hmac
+#luarocks install lua-resty-aws-auth
+```
 
 # Usage
 
