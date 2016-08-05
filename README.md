@@ -22,3 +22,10 @@ local aws = aws_auth:new(config)
 local auth = aws:get_authorization()
 
 ```
+
+Set the ngx env variable
+
+```lua
+aws:set_ngx_auth_headers()
+
+```
