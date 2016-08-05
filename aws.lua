@@ -43,7 +43,7 @@ end
 -- for authentication
 local function set_ngx_auth_headers()
   ngx.req.set_header('Authorization', get_authorization())
-   
+  ngx.req.set_header('x-amz-date', timestamp) 
 end
 
 
