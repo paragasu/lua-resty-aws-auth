@@ -19,19 +19,13 @@ local function _M.new(config)
 end
 
 
--- get credential
-local function get_credential()
-  local param = { aws_key, date, aws_region,aws_service, "aws4_request" }
-  return table.concat(param, "/")
-end
-
-
 -- get authorization string
 -- x-amz-content-sha256 required by s3
 local function _M.get_authorization()
+  local param = { aws_key, date, aws_region,aws_service, "aws4_request" }
   local header = {
     "AWS4-HMAC-SHA256",
-    "Credential=" .. get_credential(),
+    "Credential=" .. table.concat(param, "/"),
     "SignedHeaders=host;x-amz-content-sha256;x-amz-date",
     "Signature=" .. get_signature()
   }
