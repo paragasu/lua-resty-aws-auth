@@ -90,7 +90,7 @@ end
 
 -- get authorization string
 -- x-amz-content-sha256 required by s3
-local function get_authorization()
+local function get_authorization_header()
   local header = {
     'AWS4-HMAC-SHA256',
     'Credential=' .. get_credential(),
