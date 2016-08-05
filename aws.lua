@@ -3,14 +3,13 @@
 -- Author: jeffry L. paragasu@gmail.com
 -- Licence: MIT
 
-local _M = { __VERSION = "0.1.0" }
 local aws_key, aws_secret, aws_region, aws_service, request
 local time = tonumber(ngx.time())
 local date = os.date('!%Y%m%d', time),
 local timestamp = os.date('!%Y%m%dT%H%M%SZ', time)
 
 -- init new aws auth
-local function _M.new(config)
+local function new(config)
   aws_key     = config.aws_key,
   aws_secret  = config.aws_secret,
   aws_region  = config.aws_region,
@@ -21,7 +20,7 @@ end
 
 -- get authorization string
 -- x-amz-content-sha256 required by s3
-local function _M.get_authorization()
+local function get_authorization()
   local param  = { aws_key, date, aws_region,aws_service, "aws4_request" }
   local header = {
     "AWS4-HMAC-SHA256",
@@ -34,7 +33,7 @@ end
 
 
 -- get the current timestamp in iso8601 basic format
-local function _M.get_amz_date()
+local function get_amz_date()
   return timestamp
 end
 
@@ -42,9 +41,15 @@ end
 -- update ngx.request.headers
 -- will all the necessary aws required headers
 -- for authentication
-local function _M.set_ngx_auth_headers()
+local function set_ngx_auth_headers()
    
 end
 
 
-return _M
+return _M = {
+  __VERSION = "0.1.0",
+  new = new,
+  get_amz_date = get_amz_date,
+  get_authorization = get_authorization,
+  set_ngx_auth_headers = set_ngx_auth_headers 
+}
