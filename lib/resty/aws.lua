@@ -50,7 +50,7 @@ local function get_canonical_request()
     'content-type:application/x-www-form-urlencoded',
     'host:' .. table.concat({ aws_service, aws_region, 'amazonaws.com' }, '.'),
     'x-amz-content-sha256:' .. digest,
-    'x-amz-date:' .. timestamp,
+    'x-amz-date:' .. timestamp .. '\n', -- there is a line break here
     'host;content-type;x-content-sha256;x-amz-date',
     digest
   } 
