@@ -23,6 +23,7 @@ end
 
 
 -- get signing key
+-- https://docs.aws.amazon.com/general/latest/gr/sigv4-calculate-signature.html
 local function get_signing_key()
   local h = resty_hmac:new()
   local k_date = h:digest('sha256', 'AWS4' .. date, true)
