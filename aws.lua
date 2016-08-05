@@ -21,14 +21,14 @@ end
 -- get authorization string
 -- x-amz-content-sha256 required by s3
 local function get_authorization()
-  local param  = { aws_key, date, aws_region,aws_service, "aws4_request" }
+  local param  = { aws_key, date, aws_region,aws_service, 'aws4_request' }
   local header = {
-    "AWS4-HMAC-SHA256",
-    "Credential=" .. table.concat(param, "/"),
-    "SignedHeaders=host;x-amz-content-sha256;x-amz-date",
-    "Signature=" .. get_signature()
+    'AWS4-HMAC-SHA256',
+    'Credential=' .. table.concat(param, '/'),
+    'SignedHeaders=host;x-amz-content-sha256;x-amz-date',
+    'Signature=' .. get_signature()
   }
-  return table.concat(header, ", ")
+  return table.concat(header, ', ')
 end
 
 
@@ -42,12 +42,13 @@ end
 -- will all the necessary aws required headers
 -- for authentication
 local function set_ngx_auth_headers()
+  ngx.req.set_header('Authorization', get_authorization())
    
 end
 
 
-return _M = {
-  __VERSION = "0.1.0",
+return {
+  __VERSION = '0.1.0',
   new = new,
   get_amz_date = get_amz_date,
   get_authorization = get_authorization,
