@@ -5,7 +5,7 @@ Simple lua resty utilities to generate amazon v4 authorization and signature hea
 
 Openresty installation should be compiled with *--with-luajit* directive otherwise you will get an error,
 
-    "module 'ffi' not found"
+    module 'ffi' not found
 
 Install the package using luarocks 
 
