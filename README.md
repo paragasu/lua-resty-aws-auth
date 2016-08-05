@@ -16,16 +16,23 @@ local config = {
   aws_secret = "",
   region  = "",
   service = "",
-  req = ""
+  req = "" -- table of all request params
 }
+
 local aws = aws_auth:new(config)
+
+-- get the generated authorization header
 local auth = aws:get_authorization()
 
 ```
 
-Set the ngx env variable
+Add _Authorization_ and _x-amz-date_ header to ngx.req.headers
 
 ```lua
 aws:set_ngx_auth_headers()
 
 ```
+
+
+Reference 
+[Signing AWS With Signature V4](https://docs.aws.amazon.com/general/latest/gr/sigv4_signing.html)
