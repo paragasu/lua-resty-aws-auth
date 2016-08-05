@@ -46,11 +46,12 @@ end
 local function get_canonical_request()
   local digest = get_sha256_digest(ngx.var.request_body)
   local param  = {
-    'POST' .. '\n',
-    '/',
-    'host;content-type;x-content-sha256;x-amz-date',
+    'POST' .. '\n/\n',
+    'content-type:application/x-www-form-urlencoded',
+    'host:' .. table.concat({ aws_service, aws_region, 'amazonaws.com' }, '.'),
     'x-amz-content-sha256:' .. digest,
     'x-amz-date:' .. timestamp,
+    'host;content-type;x-content-sha256;x-amz-date',
     digest
   } 
   
