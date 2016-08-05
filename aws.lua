@@ -62,7 +62,7 @@ end
 
 -- build aws credential
 local function get_credential()
-  local param   = { aws_key, date, aws_region, aws_service, 'aws4_request' }
+  local param = { aws_key, date, aws_region, aws_service, 'aws4_request' }
   return table.concat(param, '/') 
 end
 
