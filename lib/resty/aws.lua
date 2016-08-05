@@ -120,6 +120,6 @@ return {
   __VERSION = '0.1.0',
   new = new,
   get_amz_date = get_amz_date,
-  get_authorization = get_authorization,
+  get_authorization_header = get_authorization_header,
   set_ngx_auth_headers = set_ngx_auth_headers 
 }
