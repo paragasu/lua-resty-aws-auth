@@ -16,7 +16,7 @@ local config = {
   aws_secret = "xxxsecret",
   region  = "us-east-1",
   service = "ses",
-  req = "" -- table of all request params
+  req = { hello="world" } -- table of all request params
 }
 
 local aws = aws_auth:new(config)
