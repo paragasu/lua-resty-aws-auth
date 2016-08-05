@@ -22,7 +22,7 @@ end
 -- get authorization string
 -- x-amz-content-sha256 required by s3
 local function _M.get_authorization()
-  local param = { aws_key, date, aws_region,aws_service, "aws4_request" }
+  local param  = { aws_key, date, aws_region,aws_service, "aws4_request" }
   local header = {
     "AWS4-HMAC-SHA256",
     "Credential=" .. table.concat(param, "/"),
