@@ -8,16 +8,16 @@ local resty_hmac   = require 'resty.hmac'
 local resty_sha256 = require 'resty.sha256'
 local str  = require 'resty.string'
 local time = tonumber(ngx.time())
-local date = os.date('!%Y%m%d', time),
+local date = os.date('!%Y%m%d', time)
 local timestamp = os.date('!%Y%m%dT%H%M%SZ', time)
 local aws_key, aws_secret, aws_region, aws_service, request
 
 -- init new aws auth
 local function new(config)
-  aws_key     = config.aws_key,
-  aws_secret  = config.aws_secret,
-  aws_region  = config.aws_region,
-  aws_service = config.aws_service,
+  aws_key     = config.aws_key
+  aws_secret  = config.aws_secret
+  aws_region  = config.aws_region
+  aws_service = config.aws_service
   request     = config.req 
 end
 
