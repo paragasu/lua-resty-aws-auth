@@ -7,7 +7,11 @@ Openresty installation should be compiled with *--with-luajit* directive otherwi
 
     "module 'ffi' not found"
 
+Install the package using luarocks 
+
 ```lua
+#aptitude install luarocks
+
 -- install dependency
 #luarocks install lua-resty-string
 #luarocks install lua-resty-hmac
