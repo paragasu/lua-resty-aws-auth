@@ -31,7 +31,6 @@ local function get_canonical_headers()
     'host:' .. aws_host,
     'x-amz-date:' .. iso_tz
   }
-
   return table.concat(h, '\n')
 end
 
