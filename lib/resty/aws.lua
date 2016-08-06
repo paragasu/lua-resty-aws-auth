@@ -19,17 +19,18 @@ local function new(config)
   aws_region  = config.aws_region
   aws_service = config.aws_service
   host        = config.aws_host
+  method      = config.method or 'POST'
   request     = config.req 
 end
 
 
 -- get signing key
 -- https://docs.aws.amazon.com/general/latest/gr/sigv4-calculate-signature.html
-local function get_signing_key()
+local function get_signing_key(date, region, service)
   local h = resty_hmac:new()
   local k_date = h:digest('sha256', 'AWS4' .. date, true)
-  local k_region = h:digest('sha256', k_date, aws_region, true)
-  local k_service = h:digest('sha256', k_region, aws_service, true)
+  local k_region = h:digest('sha256', k_date, region, true)
+  local k_service = h:digest('sha256', k_region, service, true)
   return h:digest('sha256', k_service, 'aws4_request', true)
 end
 
@@ -44,14 +45,14 @@ end
 
 -- get canonical request 
 -- https://docs.aws.amazon.com/general/latest/gr/sigv4-create-canonical-request.html
-local function get_canonical_request()
-  local digest = get_sha256_digest(ngx.var.request_body)
+local function get_canonical_request(host, iso_date, request_body)
+  local digest = get_sha256_digest(request_body)
   local param  = {
     'POST' .. '\n/\n',
     'content-type:application/x-www-form-urlencoded',
     'host:' .. host,
     'x-amz-content-sha256:' .. digest,
-    'x-amz-date:' .. timestamp .. '\n', -- there is a line break here
+    'x-amz-date:' .. iso_date .. '\n', -- there is a line break here
     'host;content-type;x-content-sha256;x-amz-date',
     digest
   } 
@@ -83,7 +84,7 @@ end
 -- generate signature
 local function get_signature()
   local h = resty_hmac:new()
-  local signing_key = get_signing_key()
+  local signing_key = get_signing_key(date, aws_region, aws_service)
   local string_to_sign = get_string_to_sign() 
   return h:digest('sha256', signing_key, string_to_sign, false)
 end
@@ -120,6 +121,7 @@ end
 return {
   __VERSION = '0.1.0',
   new = new,
+  get_encoded_request = get_encoded_request,
   get_amz_date_header = get_amz_date_header,
   get_authorization_header = get_authorization_header,
   set_ngx_auth_headers = set_ngx_auth_headers 
