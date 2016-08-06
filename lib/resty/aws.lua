@@ -57,20 +57,8 @@ local function get_canonical_request()
     signed_header, 
     signed_body
   } 
-  
   local canonical_request = table.concat(param, '\n')      
   return get_sha256_digest(canonical_request)
-end
-
-
--- get signing key
--- https://docs.aws.amazon.com/general/latest/gr/sigv4-calculate-signature.html
-local function get_signing_key(date, region, service)
-  local h = resty_hmac:new()
-  local k_date = h:digest('sha256', 'AWS4' .. date, true)
-  local k_region = h:digest('sha256', k_date, region, true)
-  local k_service = h:digest('sha256', k_region, service, true)
-  return h:digest('sha256', k_service, 'aws4_request', true)
 end
 
 
@@ -80,6 +68,18 @@ local function get_sha256_digest(s)
   h:update(s)
   return str.to_hex(h:final())
 end
+
+
+-- get signing key
+-- https://docs.aws.amazon.com/general/latest/gr/sigv4-calculate-signature.html
+local function get_signing_key()
+  local h = resty_hmac:new()
+  local k_date = h:digest('sha256', 'AWS4' .. iso_date, true)
+  local k_region = h:digest('sha256', k_date, aws_region, true)
+  local k_service = h:digest('sha256', k_region, aws_service, true)
+  return h:digest('sha256', k_service, 'aws4_request', true)
+end
+
 
 -- build aws credential
 local function get_credential()
@@ -92,7 +92,7 @@ end
 local function get_string_to_sign()
   local content = {
     'AWS4-HMAC-SHA256',
-    timestamp,
+    iso_tz,
     get_credential(),
     get_canonical_request()
   }
@@ -103,7 +103,7 @@ end
 -- generate signature
 local function get_signature()
   local h = resty_hmac:new()
-  local signing_key = get_signing_key(date, aws_region, aws_service)
+  local signing_key = get_signing_key()
   local string_to_sign = get_string_to_sign() 
   return h:digest('sha256', signing_key, string_to_sign, false)
 end
@@ -112,10 +112,11 @@ end
 -- get authorization string
 -- x-amz-content-sha256 required by s3
 local function get_authorization_header()
+  local signed_header =  'content-type;host;x-amz-date'
   local header = {
     'AWS4-HMAC-SHA256',
     'Credential=' .. get_credential(),
-    'SignedHeaders=host;content-type;x-amz-date',
+    'SignedHeaders=' .. signed_header,
     'Signature=' .. get_signature()
   }
   return table.concat(header, ', ')
@@ -124,7 +125,7 @@ end
 
 -- get the current timestamp in iso8601 basic format
 local function get_amz_date_header()
-  return timestamp
+  return date_tz
 end
 
 
@@ -140,8 +141,14 @@ end
 return {
   __VERSION = '0.1.0',
   new = new,
-  get_encoded_request = get_encoded_request,
+  get_canonical_headers = get_canonical_headers,
+  get_signed_request_body = get_signed_request_body,
+  get_canonical_request = get_canonical_request,
+  get_signed_key = get_signed_key,
+  get_credential = get_credential,
+  get_string_to_sign = get_string_to_sign,
   get_amz_date_header = get_amz_date_header,
+  get_signature = get_signature,
   get_authorization_header = get_authorization_header,
   set_ngx_auth_headers = set_ngx_auth_headers 
 }
