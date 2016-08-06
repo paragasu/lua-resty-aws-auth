@@ -20,14 +20,17 @@ local timestamp = '20150830T123600Z'
 test_aws = {}
 
 function test_aws:test_url_encode_request()
-  local req = {
-    Param1 = 'value1',
-    Param2 = 'Value2'
-  }
-
+  local req = { Param1 = 'value1', Param2 = 'Value2' }
   local request = aws:get_encoded_request(req)
   luaunit.assertEquals('Param1=value1&Param2=value1', request)
 end
+
+
+function test_aws:test_canonical_header()
+  local header = aws:get_canonical_header(headers)
+end
+
+
 
 function test_aws:test_get_signing_key()
 --  local key = aws:get_signing_key(date, 'us-east-1', 'ses')

@@ -8,9 +8,9 @@ local resty_hmac   = require 'resty.hmac'
 local resty_sha256 = require 'resty.sha256'
 local str  = require 'resty.string'
 local time = tonumber(ngx.time())
-local date = os.date('!%Y%m%d', time)
-local timestamp = os.date('!%Y%m%dT%H%M%SZ', time)
-local aws_key, aws_secret, aws_region, aws_service, host, request
+local iso_date = os.date('!%Y%m%d', time)
+local iso_tz   = os.date('!%Y%m%dT%H%M%SZ', time)
+local aws_key, aws_secret, aws_region, aws_service, aws_host, req_body
 
 -- init new aws auth
 local function new(config)
@@ -18,8 +18,47 @@ local function new(config)
   aws_secret  = config.aws_secret
   aws_region  = config.aws_region
   aws_service = config.aws_service
-  host        = config.aws_host
-  request     = config.req 
+  aws_host    = config.aws_host
+  req_body    = config.request_body
+end
+
+
+-- create canonical headers
+-- header must be sorted asc 
+local function get_canonical_headers()
+  local h = {
+    'content-type:application/x-www-form-urlencoded',
+    'host:' .. aws_host,
+    'x-amz-date:' .. iso_tz
+  }
+
+  return table.concat(h, '\n')
+end
+
+
+local function get_signed_request_body()
+  table.sort(req_body)
+  local params = ngx.encode_args(req_body)
+  local digest = get_sha256_digest(params or '')
+  return string.lower(digest) -- hash must be in lowercase hex string
+end
+
+
+-- get canonical request 
+-- https://docs.aws.amazon.com/general/latest/gr/sigv4-create-canonical-request.html
+local function get_canonical_request()
+  local param  = {
+    'POST\n',
+    '/\n', -- canonical url is / for post
+    '\n',  -- canonical query string empty because we only support post
+    'content-type:application/x-www-form-urlencoded',
+    get_canonical_header(),
+    'content-type;host;x-amz-date\n' --signed header
+    get_signed_request_body()
+  } 
+  
+  local canonical_request = table.concat(param, '\n')      
+  return get_sha256_digest(canonical_request)
 end
 
 
@@ -40,26 +79,6 @@ local function get_sha256_digest(s)
   h:update(s)
   return str.to_hex(h:final())
 end
-
-
--- get canonical request 
--- https://docs.aws.amazon.com/general/latest/gr/sigv4-create-canonical-request.html
-local function get_canonical_request(host, iso_date, request_body)
-  local digest = get_sha256_digest(request_body)
-  local param  = {
-    'POST' .. '\n/\n',
-    'content-type:application/x-www-form-urlencoded',
-    'host:' .. host,
-    'x-amz-content-sha256:' .. digest,
-    'x-amz-date:' .. iso_date .. '\n', -- there is a line break here
-    'host;content-type;x-content-sha256;x-amz-date',
-    digest
-  } 
-  
-  local canonical_request = table.concat(param, '\n')      
-  return get_sha256_digest(canonical_request)
-end
-
 
 -- build aws credential
 local function get_credential()
