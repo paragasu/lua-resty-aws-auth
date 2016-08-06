@@ -46,13 +46,13 @@ end
 -- get canonical request 
 -- https://docs.aws.amazon.com/general/latest/gr/sigv4-create-canonical-request.html
 local function get_canonical_request()
+  local signed_header = 'content-type;host;x-amz-date\n'
   local param  = {
     'POST\n',
     '/\n', -- canonical url is / for post
     '\n',  -- canonical query string empty because we only support post
-    'content-type:application/x-www-form-urlencoded',
     get_canonical_header(),
-    'content-type;host;x-amz-date\n' --signed header
+    signed_header, 
     get_signed_request_body()
   } 
   
