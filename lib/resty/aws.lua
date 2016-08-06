@@ -19,7 +19,6 @@ local function new(config)
   aws_region  = config.aws_region
   aws_service = config.aws_service
   host        = config.aws_host
-  method      = config.method or 'POST'
   request     = config.req 
 end
 
