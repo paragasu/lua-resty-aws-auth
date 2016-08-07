@@ -91,14 +91,6 @@ function _M.get_signing_key(self)
   return self:hmac(k_service, 'aws4_request')
 end
 
-
--- build aws credential
-function _M.get_credential()
-  local  param = { aws_key, iso_date, aws_region, aws_service, 'aws4_request' }
-  return table.concat(param, '/') 
-end
-
-
 -- get string
 function _M.get_string_to_sign(self)
   local param = { iso_date, aws_region, aws_service, 'aws4_request' }
@@ -119,11 +111,10 @@ end
 -- get authorization string
 -- x-amz-content-sha256 required by s3
 function _M.get_authorization_header(self)
-  local signed_header =  'content-type;host;x-amz-date'
+  local  param = { aws_key, iso_date, aws_region, aws_service, 'aws4_request' }
   local header = {
-    'AWS4-HMAC-SHA256',
-    'Credential=' .. self:get_credential(),
-    'SignedHeaders=' .. signed_header,
+    'AWS4-HMAC-SHA256 Credential=' .. table.concat(param, '/'),
+    'SignedHeaders=content-type;host;x-amz-date',
     'Signature=' .. self:get_signature()
   }
   return table.concat(header, ', ')
