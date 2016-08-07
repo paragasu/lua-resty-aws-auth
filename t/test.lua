@@ -13,7 +13,7 @@ local aws = aws_auth:new({
   }
 })
 
-local date = '20150830'
+local date      = '20150830'
 local timestamp = '20150830T123600Z'
 
 -- init

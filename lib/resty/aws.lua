@@ -18,8 +18,6 @@ local _M = {
 
 local mt = { __index = _M }
 
-inspect = require 'inspect'
-
 -- init new aws auth
 function _M.new(self, config)
   aws_key     = config.aws_key
@@ -33,7 +31,7 @@ end
 
 -- create canonical headers
 -- header must be sorted asc 
-function _M.get_canonical_headers(self)
+function _M.get_canonical_header(self)
   local h = {
     'content-type:application/x-www-form-urlencoded',
     'host:' .. aws_host,
@@ -62,25 +60,28 @@ function _M.get_canonical_request(self)
     '/\n', -- canonical url is / for post
     '\n',  -- canonical query string empty because we only support post
     canonical_header,
+    '\n',  -- required
     signed_header, 
     signed_body
   } 
   local canonical_request = table.concat(param, '\n')      
-  return self:get_sha256_digest(canonical_request)
+  local req = self:get_sha256_digest(canonical_request)
+  print('req: ', req)
+  return req
 end
 
 
 -- generate sha256 from the given string
-function _M.get_sha256_digest(s)
+function _M.get_sha256_digest(self, s)
   local h = resty_sha256:new()
   h:update(s)
   return str.to_hex(h:final())
 end
 
 
-function _M.hmac(secret, message)
+function _M.hmac(self, secret, message)
   local  h = hmac:new('AWS4' .. aws_secret, hmac.ALGOS.SHA256)
-  return h.final(message, false)
+  return h:final(message, false)
 end
 
 -- get signing key
@@ -95,20 +96,17 @@ end
 
 -- build aws credential
 function _M.get_credential()
-  local param = { aws_key, iso_date, aws_region, aws_service, 'aws4_request' }
+  local  param = { aws_key, iso_date, aws_region, aws_service, 'aws4_request' }
   return table.concat(param, '/') 
 end
 
 
 -- get string
 function _M.get_string_to_sign(self)
-  local content = {
-    'AWS4-HMAC-SHA256',
-    iso_tz,
-    self:get_credential(),
-    self:get_canonical_request()
-  }
-  return table.concat(content, '\n')
+  local param = { iso_date, aws_region, aws_service, 'aws4_request' }
+  local cred  = table.concat(param, '/')
+  local req   = self:get_canonical_request()
+  return table.concat({ 'AWS-HMAC-SHA256', iso_tz, cred, req}, '\n')
 end
 
 
@@ -116,7 +114,7 @@ end
 function _M.get_signature(self)
   local  signing_key = self:get_signing_key()
   local  string_to_sign = self:get_string_to_sign() 
-  return str.to_hex(self.hmac(signing_key, string_to_sign))
+  return str.to_hex(self:hmac(signing_key, string_to_sign))
 end
 
 
@@ -135,16 +133,16 @@ end
 
 
 -- get the current timestamp in iso8601 basic format
-function _M.get_amz_date_header()
-  return date_tz
+function _M.get_date_header()
+  return iso_tz
 end
 
 
 -- update ngx.request.headers
 -- will all the necessary aws required headers
 -- for authentication
-function _M.set_ngx_auth_headers()
-  ngx.req.set_header('Authorization', get_authorization())
+function _M.set_ngx_auth_headers(self)
+  ngx.req.set_header('Authorization', self.get_authorization_header())
   ngx.req.set_header('X-Amz-Date', timestamp) 
 end
 
