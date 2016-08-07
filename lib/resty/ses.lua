@@ -24,7 +24,7 @@ aws:new(config)
 local auth_header = aws:get_authorization_header()
 local amz_date_header = aws:get_date_header()
 
---print('Authorization: ' .. auth_header)
+print('Authorization: ' .. auth_header)
 --print('Date: ' .. amz_date_header)
 
 local httpc = http:new()

@@ -52,22 +52,20 @@ end
 -- get canonical request 
 -- https://docs.aws.amazon.com/general/latest/gr/sigv4-create-canonical-request.html
 function _M.get_canonical_request(self)
-  local signed_header = 'content-type;host;x-amz-date\n'
+  local signed_header = 'content-type;host;x-amz-date'
   local canonical_header = self:get_canonical_header()
   local signed_body = self:get_signed_request_body()
   local param  = {
-    'POST\n',
-    '/\n', -- canonical url is / for post
-    '\n',  -- canonical query string empty because we only support post
+    'POST',
+    '/',  -- canonical url is / for post
+    '', -- canonical querystr
     canonical_header,
-    '\n',  -- required
+    '',   -- required
     signed_header, 
     signed_body
   } 
   local canonical_request = table.concat(param, '\n')      
-  local req = self:get_sha256_digest(canonical_request)
-  print('req: ', req)
-  return req
+  return self:get_sha256_digest(canonical_request)
 end
 
 
