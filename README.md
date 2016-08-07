@@ -15,7 +15,7 @@ Install the package using luarocks
 
 -- install dependency
 #luarocks install lua-resty-string
-#luarocks install lua-resty-hmac
+#luarocks install lua-erento-hmac
 #luarocks install lua-resty-aws-auth
 ```
 
