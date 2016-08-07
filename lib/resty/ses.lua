@@ -1,21 +1,45 @@
-local aws_auth = require 'aws'
+local aws  = require 'aws'
+local http = require 'resty.http'
 
 local payload = {
-    Action = 'sendEmail',
-    Source = 'hello@roompillow.com',
-    Destination.ToAddress.member.1='paragasu@gmail.com',
-    Message.Subject.Data = 'Hello World',
-    Message.Body.Text.Data = 'Hello There'
+    ['Action'] = 'sendEmail',
+    ['Source'] = 'hello@roompillow.com',
+    ['Destination.ToAddress.member.1'] ='paragasu@gmail.com',
+    ['Message.Subject.Data']   = 'Hello World',
+    ['Message.Body.Text.Data'] = 'Hello There'
 }
 
 local config = {
-  aws_key = 'AKIAJRD4IKQHT6O6QSGQ',
-  aws_secret = 'AjqZl4wYTyuuQDveeaFcwyCYKQHYaqUYzoFahwtzto8N',
-  aws_region = 'us-east-1',
-  aws_service = 'email',
-  req = payload
+  aws_key     = 'AKIAJRD4IKQHT6O6QSGQ',
+  aws_secret  = 'AjqZl4wYTyuuQDveeaFcwyCYKQHYaqUYzoFahwtzto8N',
+  aws_host    = 'email.us-east-1.amazonaws.com',
+  aws_region  = 'us-east-1',
+  aws_service = 'ses',
+  request_body= payload
 }
+local inspect = require 'inspect'
 
-local aws = aws_auth:mew(config)
+aws:new(config)
 
-print(aws:get_authorization_header())
+local auth_header = aws:get_authorization_header()
+local amz_date_header = aws:get_amz_date_header()
+
+ngx.log(ngx.ERR, 'auth header ' .. auth_header)
+ngx.log(ngx.ERR, 'amz date' .. amz_date_header)
+
+local httpc = http:new()
+local res, err = httpc:request_uri('https://' .. config.aws_host, {
+  method = 'POST',
+  body = ngx.encode_args(payload),
+  headers = {
+    ['Authorization'] = auth_header,
+    ['X-Amz-Date'] = amz_date_header 
+  }
+})
+
+if not res then
+  ngx.say('Failed request', err)
+end
+
+ngx.say(res.body)
+ngx.say('SES done')
