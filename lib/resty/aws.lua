@@ -4,8 +4,8 @@
 -- Licence: MIT
 
 
-local hmac   = require 'resty.hmac'
 local resty_sha256 = require 'resty.sha256'
+local hmac   = require 'resty.hmac'
 local str  = require 'resty.string'
 local time = tonumber(ngx.time())
 local iso_date = os.date('!%Y%m%d', time)
@@ -78,18 +78,29 @@ end
 
 
 function _M.hmac(self, secret, message)
-  local  h = hmac:new('AWS4' .. aws_secret, hmac.ALGOS.SHA256)
-  return h:final(message, false)
+  local h = hmac:new(secret, hmac.ALGOS.SHA256)
+  local s = h:final(message, false)
+  h:reset()
+  return s
 end
+
 
 -- get signing key
 -- https://docs.aws.amazon.com/general/latest/gr/sigv4-calculate-signature.html
 function _M.get_signing_key(self)
+  aws_secret = '41575334774a616c725855746e46454d492f4b374d44454e472b62507852666943594558414d504c454b4559'
+  iso_date = '20120215'
+  k_region = 'us-east-1'
+  k_service = 'iam' 
   local  k_date    = self:hmac('AWS4' .. aws_secret, iso_date)
+  print('k_date: ', str.to_hex(k_date))
   local  k_region  = self:hmac(k_date, aws_region)
   local  k_service = self:hmac(k_region, aws_service)
-  return self:hmac(k_service, 'aws4_request')
+  local  k_signing = self:hmac(k_service, 'aws4_request')
+  print('signing: ', str.to_hex(k_signing))
+  return k_signing
 end
+
 
 -- get string
 function _M.get_string_to_sign(self)
