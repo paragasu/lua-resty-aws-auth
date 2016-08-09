@@ -142,5 +142,4 @@ function _M.get_date_header()
 end
 
 
-
 return _M
