@@ -58,3 +58,6 @@ aws:set_ngx_auth_headers()
 
 Reference  
 [Signing AWS With Signature V4](https://docs.aws.amazon.com/general/latest/gr/sigv4_signing.html)
+[AWS service namespaces list](http://docs.aws.amazon.com/general/latest/gr/aws-arns-and-namespaces.html)  
+[AWS region and endpoints](http://docs.aws.amazon.com/general/latest/gr/rande.html)  
+
