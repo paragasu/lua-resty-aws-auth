@@ -127,12 +127,6 @@ function _M.get_authorization_header(self)
 end
 
 
--- get the current timestamp in iso8601 basic format
-function _M.get_date_header()
-  return iso_tz
-end
-
-
 -- update ngx.request.headers
 -- will all the necessary aws required headers
 -- for authentication
@@ -140,6 +134,13 @@ function _M.set_ngx_auth_headers(self)
   ngx.req.set_header('Authorization', self.get_authorization_header())
   ngx.req.set_header('X-Amz-Date', timestamp) 
 end
+
+
+-- get the current timestamp in iso8601 basic format
+function _M.get_date_header()
+  return iso_tz
+end
+
 
 
 return _M
