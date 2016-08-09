@@ -101,7 +101,7 @@ function _M.get_string_to_sign(self)
   local param = { iso_date, aws_region, aws_service, 'aws4_request' }
   local cred  = table.concat(param, '/')
   local req   = self:get_canonical_request()
-  return table.concat({ 'AWS-HMAC-SHA256', iso_tz, cred, req}, '\n')
+  return table.concat({ 'AWS4-HMAC-SHA256', iso_tz, cred, req}, '\n')
 end
 
 

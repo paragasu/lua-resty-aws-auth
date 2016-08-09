@@ -4,7 +4,7 @@ local http = require 'resty.http'
 local payload = {
     ['Action'] = 'SendEmail',
     ['Source'] = 'hello@roompillow.com',
-    ['Destination.ToAddress.member.1'] ='paragasu@gmail.com',
+    ['Destination.ToAddresses.member.1'] ='paragasu@gmail.com',
     ['Message.Subject.Data']   = 'Hello World',
     ['Message.Body.Text.Data'] = 'Hello There'
 }
