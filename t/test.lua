@@ -12,17 +12,17 @@ local aws = aws_auth:new({
   }
 })
 
-local date      = '20150830'
-local timestamp = '20150830T123600Z'
+local iso_date, iso_tz = aws:get_iso_date()
+
+print(iso_date, iso_tz)
 
 -- init
 test_aws = {}
 
 function test_aws:test_url_encode_request()
-  local req = { Param1 = 'value1', Param2 = 'Value2' }
-  luaunit.assertEquals(1, true)
-  --local request = aws:get_encoded_request(req)
-  --luaunit.assertEquals('Param1=value1&Param2=value1', request)
+  local canonical_header = aws:get_canonical_header()
+  local expected_header  = 'content-type:application/x-www-form-urlencoded\nhost:email.us-east-1.amazonaws.com\nx-amz-date:' .. iso_tz
+  luaunit.assertEquals(canonical_header, expected_header)
 end
 
 

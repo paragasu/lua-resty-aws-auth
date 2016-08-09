@@ -7,9 +7,8 @@
 local resty_sha256 = require 'resty.sha256'
 local hmac   = require 'resty.hmac'
 local str  = require 'resty.string'
-local time = tonumber(ngx.time())
-local iso_date = os.date('!%Y%m%d', time)
-local iso_tz   = os.date('!%Y%m%dT%H%M%SZ', time)
+local iso_date = os.date('!%Y%m%d', ngx.time())
+local iso_tz   = os.date('!%Y%m%dT%H%M%SZ', ngx.time())
 local aws_key, aws_secret, aws_region, aws_service, aws_host, req_body
 
 local _M = {
@@ -28,6 +27,13 @@ function _M.new(self, config)
   req_body    = config.request_body
   return setmetatable(_M, mt)
 end
+
+
+-- required for testing
+function _M.get_iso_date(self)
+  return iso_date, iso_tz
+end
+
 
 -- create canonical headers
 -- header must be sorted asc 
