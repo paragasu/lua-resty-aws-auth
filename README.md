@@ -23,8 +23,8 @@ Install the package using luarocks
 
 ```lua
 
-local aws_auth = require "lua-resty-aws-auth"
-local config = {
+local aws_auth = require "aws-auth"
+local config   = {
   aws_host     = "email.us-east-1.amazonaws.com",
   aws_key      = "AKIDEXAMPLE",
   aws_secret   = "xxxsecret",
