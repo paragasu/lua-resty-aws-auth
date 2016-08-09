@@ -92,7 +92,6 @@ function _M.get_signing_key(self)
   local  k_region  = self:hmac(k_date, aws_region)
   local  k_service = self:hmac(k_region, aws_service)
   local  k_signing = self:hmac(k_service, 'aws4_request')
-  print('signing: ', str.to_hex(k_signing), ' secret: ', aws_secret)
   return k_signing
 end
 
