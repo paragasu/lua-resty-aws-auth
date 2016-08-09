@@ -1,4 +1,4 @@
-local aws  = require 'aws'
+local aws  = require 'aws_auth'
 local http = require 'resty.http'
 
 local payload = {
@@ -26,7 +26,7 @@ local amz_date_header = aws:get_date_header()
 
 print('Authorization: ' .. auth_header)
 --print('Date: ' .. amz_date_header)
-
+--[[
 local httpc = http:new()
 local res, err = httpc:request_uri('https://' .. config.aws_host, {
   method = 'POST',
@@ -44,4 +44,5 @@ if not res then
 end
 
 ngx.say(res.body)
+--]]
 ngx.say('SES done')
