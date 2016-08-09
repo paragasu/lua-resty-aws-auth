@@ -10,10 +10,8 @@ local payload = {
 }
 
 local config = {
-  aws_key     = 'AKIAJRD4IKQHT6O6QSGQ',
-  --aws_key     = 'AKIAJUR6PN33WMMZIRRA',
-  aws_secret  = 'AjqZl4wYTyuuQDveeaFcwyCYKQHYaqUYzoFahwtzto8N',
-  --aws_secret  = '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',
+  aws_key     = 'AKIAJT6XHPLNMKTXJUJA',
+  aws_secret  = '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',
   aws_host    = 'email.us-east-1.amazonaws.com',
   aws_region  = 'us-east-1',
   aws_service = 'ses',
