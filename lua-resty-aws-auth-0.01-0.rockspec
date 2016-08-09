@@ -1,5 +1,5 @@
 package = "lua-resty-aws-auth"
-version = "0.08-0"
+version = "0.01-0"
 source = {
    url = "git://github.com/paragasu/lua-resty-aws-auth",
    tag = "v0.01"
