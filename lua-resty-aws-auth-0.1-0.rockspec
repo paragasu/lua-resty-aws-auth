@@ -12,8 +12,8 @@ description = {
 }
 dependencies = {
    "lua >= 5.1",
-   "lua-erento-hmac >= 1.0-0",
-   "lua-resty-string >= 0.09-0"
+   "lua-erento-hmac",
+   "lua-resty-string"
 }
 build = {
    type = "builtin",
