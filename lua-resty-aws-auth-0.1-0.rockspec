@@ -2,7 +2,7 @@ package = "lua-resty-aws-auth"
 version = "0.1-0"
 source = {
    url = "git://github.com/paragasu/lua-resty-aws-auth",
-   tag = "v0.1"
+   tag = "v0.1-0"
 }
 description = {
    summary  = "Lua utils to calculate AWS signature v4 for authorization",
