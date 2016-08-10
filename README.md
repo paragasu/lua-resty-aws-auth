@@ -11,11 +11,6 @@ Openresty installation should be compiled with *--with-luajit* directive otherwi
 Install the package using luarocks 
 
 ```lua
-#aptitude install luarocks
-
--- install dependency
-#luarocks install lua-resty-string
-#luarocks install lua-erento-hmac
 #luarocks install lua-resty-aws-auth
 ```
 
@@ -51,8 +46,6 @@ Add _Authorization_ and _x-amz-date_ header to ngx.req.headers
 aws:set_ngx_auth_headers()
 
 ```
-
-#Method
 
 
 
