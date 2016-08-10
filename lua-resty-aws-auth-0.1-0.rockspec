@@ -5,7 +5,7 @@ source = {
    tag = "v0.1-0"
 }
 description = {
-   summary  = "Lua utils to calculate AWS signature v4 for authorization",
+   summary  = "Lua resty module to calculate AWS signature v4 authorization header",
    homepage = "https://github.com/paragasu/lua-resty-aws-auth",
    license  = "MIT",
    maintainer = "Jeffry L. <paragasu@gmail.com>"
