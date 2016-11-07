@@ -8,7 +8,7 @@ local resty_sha256 = require 'resty.sha256'
 local hmac   = require 'resty.hmac'
 local str  = require 'resty.string'
 local aws_key, aws_secret, aws_region, aws_service, aws_host
-local iso_date, iso_tz, req_body
+local iso_date, iso_tz, content_type, req_method, req_path, req_body
 
 local _M = {
   _VERSION = '0.1.0'
@@ -23,6 +23,9 @@ function _M.new(self, config)
   aws_region  = config.aws_region
   aws_service = config.aws_service
   aws_host    = config.aws_host
+  cont_type   = config.content_type
+  req_method  = config.request_method
+  req_path    = config.request_path
   req_body    = config.request_body
   -- set default time
   self:set_iso_date(ngx.time())
@@ -38,10 +41,10 @@ end
 
 
 -- create canonical headers
--- header must be sorted asc 
+-- header must be sorted asc
 function _M.get_canonical_header(self)
   local h = {
-    'content-type:application/x-www-form-urlencoded',
+    'content-type:' .. cont_type,
     'host:' .. aws_host,
     'x-amz-date:' .. iso_tz
   }
@@ -50,29 +53,32 @@ end
 
 
 function _M.get_signed_request_body(self)
-  table.sort(req_body)
-  local params = ngx.encode_args(req_body)
+  local params = req_body
+  if type(req_body) == 'table' then
+    table.sort(params)
+    params = ngx.encode_args(params)
+  end
   local digest = self:get_sha256_digest(params or '')
   return string.lower(digest) -- hash must be in lowercase hex string
 end
 
 
--- get canonical request 
+-- get canonical request
 -- https://docs.aws.amazon.com/general/latest/gr/sigv4-create-canonical-request.html
 function _M.get_canonical_request(self)
   local signed_header = 'content-type;host;x-amz-date'
   local canonical_header = self:get_canonical_header()
   local signed_body = self:get_signed_request_body()
   local param  = {
-    'POST',
-    '/',  -- canonical url is / for post
+    req_method,
+    req_path,
     '', -- canonical querystr
     canonical_header,
     '',   -- required
-    signed_header, 
+    signed_header,
     signed_body
-  } 
-  local canonical_request = table.concat(param, '\n')      
+  }
+  local canonical_request = table.concat(param, '\n')
   return self:get_sha256_digest(canonical_request)
 end
 
@@ -116,7 +122,7 @@ end
 -- generate signature
 function _M.get_signature(self)
   local  signing_key = self:get_signing_key()
-  local  string_to_sign = self:get_string_to_sign() 
+  local  string_to_sign = self:get_string_to_sign()
   return str.to_hex(self:hmac(signing_key, string_to_sign))
 end
 
@@ -139,7 +145,7 @@ end
 -- for authentication
 function _M.set_ngx_auth_headers(self)
   ngx.req.set_header('Authorization', self.get_authorization_header())
-  ngx.req.set_header('X-Amz-Date', timestamp) 
+  ngx.req.set_header('X-Amz-Date', timestamp)
 end
 
 
