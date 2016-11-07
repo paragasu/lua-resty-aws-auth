@@ -1,8 +1,8 @@
-package = "lua-resty-aws-auth"
-version = "0.01-0"
+package = "lua-resty-aws-auth-mediba"
+version = "0.11-0"
 source = {
-   url = "git://github.com/paragasu/lua-resty-aws-auth",
-   tag = "v0.01-0"
+   url = "git://github.com/mediba-system/lua-resty-aws-auth",
+   tag = "v0.11-0"
 }
 description = {
    summary  = "Lua resty module to calculate AWS signature v4 authorization header",
