@@ -8,7 +8,7 @@ local resty_sha256 = require 'resty.sha256'
 local hmac   = require 'resty.hmac'
 local str  = require 'resty.string'
 local aws_key, aws_secret, aws_region, aws_service, aws_host
-local iso_date, iso_tz, content_type, req_method, req_path, req_body
+local iso_date, iso_tz, cont_type, req_method, req_path, req_body
 
 local _M = {
   _VERSION = '0.1.0'
