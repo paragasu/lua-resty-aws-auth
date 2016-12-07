@@ -1,6 +1,5 @@
 # lua-resty-aws-auth
 Simple lua resty utilities to generate amazon v4 authorization and signature headers.
-Currently only support POST request method.
 
 # Installation
 
