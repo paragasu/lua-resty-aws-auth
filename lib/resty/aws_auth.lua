@@ -23,9 +23,9 @@ function _M.new(self, config)
   aws_region  = config.aws_region
   aws_service = config.aws_service
   aws_host    = config.aws_host
-  cont_type   = config.content_type
-  req_method  = config.request_method
-  req_path    = config.request_path
+  cont_type   = config.content_type   or "application/x-www-form-urlencoded" 
+  req_method  = config.request_method or "POST"
+  req_path    = config.request_path   or "/"
   req_body    = config.request_body
   -- set default time
   self:set_iso_date(ngx.time())
