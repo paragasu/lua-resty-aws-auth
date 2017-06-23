@@ -144,8 +144,8 @@ end
 -- will all the necessary aws required headers
 -- for authentication
 function _M.set_ngx_auth_headers(self)
-  ngx.req.set_header('Authorization', self.get_authorization_header())
-  ngx.req.set_header('X-Amz-Date', timestamp)
+  ngx.req.set_header('Authorization', self.get_authorization_header(self))
+  ngx.req.set_header('X-Amz-Date', iso_tz)
 end
 
 
