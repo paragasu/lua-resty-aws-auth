@@ -8,7 +8,7 @@ local resty_sha256 = require 'resty.sha256'
 local hmac   = require 'resty.hmac'
 local str  = require 'resty.string'
 local aws_key, aws_secret, aws_region, aws_service, aws_host
-local iso_date, iso_tz, cont_type, req_method, req_path, req_body
+local iso_date, iso_tz, cont_type, req_method, req_path, req_body, req_querystr
 
 local _M = {
   _VERSION = '0.1.0'
@@ -23,10 +23,11 @@ function _M.new(self, config)
   aws_region  = config.aws_region
   aws_service = config.aws_service
   aws_host    = config.aws_host
-  cont_type   = config.content_type   or "application/x-www-form-urlencoded" 
+  cont_type   = config.content_type   or "application/x-www-form-urlencoded"
   req_method  = config.request_method or "POST"
   req_path    = config.request_path   or "/"
   req_body    = config.request_body
+  req_querystr = config.request_querystr or ""
   -- set default time
   self:set_iso_date(ngx.time())
   return setmetatable(_M, mt)
@@ -72,7 +73,7 @@ function _M.get_canonical_request(self)
   local param  = {
     req_method,
     req_path,
-    '', -- canonical querystr
+    req_querystr, -- canonical querystr
     canonical_header,
     '',   -- required
     signed_header,
