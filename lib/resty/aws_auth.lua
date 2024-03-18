@@ -27,14 +27,12 @@ function _M.new(self, config)
   req_method  = config.request_method or "POST"
   req_path    = config.request_path   or "/"
   req_body    = config.request_body
-
+  req_querystr = config.request_querystr or ""
+  
   --to handle http://host?acl case
   -- https://docs.aws.amazon.com/general/latest/gr/sigv4-create-canonical-request.html
-  if config.request_querystr and not string.find(config.request_querystr, '=') then
-    req_querystr = config.request_querystr .. "="
-  else
-    req_querystr = config.request_querystr or ""
-  end
+  if not string.find(req_querystr, '=') then req_querystr = config.request_querystr .. "=" end
+  
   -- set default time
   self:set_iso_date(ngx.time())
   return setmetatable(_M, mt)
