@@ -31,7 +31,10 @@ function _M.new(self, config)
   
   --to handle http://host?acl case
   -- https://docs.aws.amazon.com/general/latest/gr/sigv4-create-canonical-request.html
-  if not string.find(req_querystr, '=') then req_querystr = config.request_querystr .. "=" end
+  -- if req_querystr is not empty and missing =, set it as required
+  if req_querystr ~= "" and not string.find(req_querystr, '=') then
+    req_querystr = config.request_querystr .. "="
+  end
   
   -- set default time
   self:set_iso_date(ngx.time())
