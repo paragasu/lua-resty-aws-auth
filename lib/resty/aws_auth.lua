@@ -4,14 +4,13 @@
 -- Licence: MIT
 
 
-local resty_sha256 = require 'resty.sha256'
-local hmac   = require 'resty.hmac'
-local str  = require 'resty.string'
+local resty_digest = require "resty.digest"
+local str = require "resty.utils.string"
 local aws_key, aws_secret, aws_region, aws_service, aws_host
 local iso_date, iso_tz, cont_type, req_method, req_path, req_body, req_querystr
 
 local _M = {
-  _VERSION = '0.1.0'
+  _VERSION = '0.2.0'
 }
 
 local mt = { __index = _M }
@@ -88,21 +87,25 @@ function _M.get_canonical_request(self)
     signed_body
   }
   local canonical_request = table.concat(param, '\n')
+  ngx.log(ngx.INFO, "canonical_request: ", canonical_request)
   return self:get_sha256_digest(canonical_request)
 end
 
 
 -- generate sha256 from the given string
 function _M.get_sha256_digest(self, s)
-  local h = resty_sha256:new()
+  local h = resty_digest.new("sha256")
   h:update(s)
-  return str.to_hex(h:final())
+  return str.tohex(h:final())
 end
 
 
 function _M.hmac(self, secret, message)
-  local h = hmac:new(secret, hmac.ALGOS.SHA256)
-  local s = h:final(message, false)
+  ngx.log(ngx.INFO, "secret: ", secret)
+  ngx.log(ngx.INFO, "message: ", message)
+  local h = resty_digest.new("sha256", secret)
+  h:update(message)
+  local s = h:final()
   h:reset()
   return s
 end
@@ -132,7 +135,9 @@ end
 function _M.get_signature(self)
   local  signing_key = self:get_signing_key()
   local  string_to_sign = self:get_string_to_sign()
-  return str.to_hex(self:hmac(signing_key, string_to_sign))
+  ngx.log(ngx.INFO, "string_to_sign: ", string_to_sign)
+  ngx.log(ngx.INFO, "signing_key: ", signing_key)
+  return str.tohex(self:hmac(signing_key, string_to_sign))
 end
 
 
