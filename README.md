@@ -55,7 +55,7 @@ cd lua-resty-aws-auth
 docker build -t lua-resty-aws-auth .
 docker run -d --name nginx -p 8080:8080  -e AWS_ACCESS_KEY_ID=yourkey -e AWS_ACCESS_KEY_SECRET=yoursecret -e AWS_HOST=yourhost:port -e AWS_REGION=us-east-1 -e AWS_SERVICE=s3 lua-resty-aws-auth
 ```
-
+the Dockerfile works both with arm64 and amd64 architectures.
 then you can test the aws service by accessing localhost:8080. Remember to replace the environment variables with your own aws credentials.
 
 actually the backend service can be any s3 compatible service, not only from aws, minio, ceph etc.
